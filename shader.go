@@ -4,6 +4,7 @@ import (
     "fmt"
     "strings"
     "io/ioutil"
+    "unsafe"
 
     "github.com/go-gl/gl/v3.2-core/gl"
 )
@@ -14,6 +15,17 @@ type Shader struct {
 
 func (s *Shader) Use() {
     gl.UseProgram(s.program)
+}
+
+func (s *Shader) SetMatrix4fv(name string, value *float32) {
+    uniform := gl.GetUniformLocation(s.program, gl.Str(name + "\x00"))
+    gl.UniformMatrix4fv(uniform, 1, false, value)
+}
+
+func (s *Shader) VertexAttribPointer(name string, size int32, xtype uint32, normalized bool, stride int32, pointer unsafe.Pointer) {
+    attrib := uint32(gl.GetAttribLocation(s.program, gl.Str(name + "\x00")))
+    gl.EnableVertexAttribArray(attrib)
+    gl.VertexAttribPointer(attrib, size, xtype, normalized, stride, pointer)
 }
 
 func compile(source string, shaderType uint32) (uint32, error) {
@@ -81,13 +93,13 @@ func LoadShader(vertexFile, fragmentFile string) (*Shader, error) {
     if err != nil {
         return nil, err
     }
-    vertex := string(vertexBuf)
+    vertex := string(vertexBuf) + "\x00"
 
     fragmentBuf, err := ioutil.ReadFile("fragment.glsl")
     if err != nil {
         return nil, err
     }
-    fragment := string(fragmentBuf)
+    fragment := string(fragmentBuf) + "\x00"
 
     // Compile shader
     shader, err := NewShader(vertex, fragment)

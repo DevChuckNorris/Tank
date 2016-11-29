@@ -18,11 +18,14 @@ func (w *GameWindow) ShouldClose() bool {
     return w.window.ShouldClose()
 }
 
+func (w *GameWindow) Close() {
+    glfw.Terminate()
+}
+
 func CreateWindow(width, height int, title string) (*GameWindow, error) {
     if err := glfw.Init(); err != nil {
         return nil, err
     }
-    //defer glfw.Terminate()
 
     glfw.WindowHint(glfw.Resizable, glfw.False)
     glfw.WindowHint(glfw.ContextVersionMajor, 3)
