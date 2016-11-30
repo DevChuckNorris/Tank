@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"io/ioutil"
-	"strconv"
 	"strings"
 
 	"github.com/go-gl/gl/v3.2-core/gl"
@@ -60,79 +59,29 @@ func NewModel(shader *Shader, file string) (*Model, error) {
 	for i := range temp {
 		line := temp[i]
 		if strings.HasPrefix(line, "v ") {
-			details := strings.Split(line, " ")
-			if len(details) != 4 {
-				return nil, fmt.Errorf("A: Failed to parse line %d", i)
-			}
+            var x, y, z float32
+            _, err := fmt.Sscanf(line, "v %f %f %f", &x, &y, &z)
+            if err != nil {
+                return nil, fmt.Errorf("Failed to parse line %d:\n%v", i, err)
+            }
 
-			x, err := strconv.ParseFloat(details[1], 32)
-			if err != nil {
-				return nil, fmt.Errorf("B: Failed to parse line %d", i)
-			}
-			y, err := strconv.ParseFloat(details[2], 32)
-			if err != nil {
-				return nil, fmt.Errorf("C: Failed to parse line %d", i)
-			}
-
-			details[3] = strings.Replace(details[3], "\r", "", -1)
-			z, err := strconv.ParseFloat(details[3], 32)
-			if err != nil {
-				return nil, fmt.Errorf("D: Failed to parse line %d %v", i, err)
-			}
-
-			ret.vertecies = append(ret.vertecies, float32(x), float32(y), float32(z))
+            ret.vertecies = append(ret.vertecies, float32(x), float32(y), float32(z))
 		} else if strings.HasPrefix(line, "f ") {
-			details := strings.Split(line, " ")
-			if len(details) != 4 {
-				return nil, fmt.Errorf("E: Failed to parse line %d", i)
-			}
+            var v1, t1, n1, v2, t2, n2, v3, t3, n3 uint32
+            _, err := fmt.Sscanf(line, "f %d/%d/%d %d/%d/%d %d/%d/%d", &v1, &t1, &n1, &v2, &t2, &n2 ,&v3, &t3, &n3)
+            if err != nil {
+                return nil, fmt.Errorf("Failed to parse line %d:\n%v", i, err)
+            }
 
-			for x := 1; x < 4; x++ {
-				part := strings.Split(details[x], "/")
-				if len(part) != 3 {
-					return nil, fmt.Errorf("F: Failed to parse line %d", i)
-				}
-				a, err := strconv.ParseUint(part[0], 10, 32)
-				if err != nil {
-					return nil, fmt.Errorf("G: Failed to parse line %d", i)
-				}
-				ret.index = append(ret.index, uint32(a-1))
-			}
+			ret.index = append(ret.index, v1-1, v2-1, v3-1)
 		} else if strings.HasPrefix(line, "vt ") {
-			details := strings.Split(line, " ")
-			if len(details) != 3 {
-				return nil, fmt.Errorf("H: Failed to parse line %d", i)
-			}
-
-			x, err := strconv.ParseFloat(details[1], 32)
-			if err != nil {
-				return nil, fmt.Errorf("I: Failed to parse line %d", i)
-			}
-			details[2] = strings.Replace(details[2], "\r", "", -1)
-			y, err := strconv.ParseFloat(details[2], 32)
-			if err != nil {
-				return nil, fmt.Errorf("J: Failed to parse line %d", i)
-			}
+            var x, y float32
+            _, err := fmt.Sscanf(line, "vt %f %f", &x, &y)
+            if err != nil {
+                return nil, fmt.Errorf("Failed to parse line %d:\n%v", i, err)
+            }
 
 			ret.texCoords = append(ret.texCoords, float32(x), float32(y))
-		}
-	}
-
-	for i := range ret.vertecies {
-		fmt.Printf("%v ", ret.vertecies[i])
-		if (i+1)%3 == 0 {
-			fmt.Println()
-		}
-	}
-
-	fmt.Println("--------------------------------------------------")
-
-	for i := range ret.index {
-		index := ret.index[i]
-		vertex := []float32{ret.vertecies[index*3], ret.vertecies[index*3+1], ret.vertecies[index*3+2]}
-		fmt.Printf("%v(%v %v %v) ", index, vertex[0], vertex[1], vertex[2])
-		if (i+1)%3 == 0 {
-			fmt.Println()
 		}
 	}
 
