@@ -1,4 +1,4 @@
-package main
+package ogl
 
 import (
 	"github.com/go-gl/gl/v3.2-core/gl"
@@ -22,6 +22,10 @@ func (w *GameWindow) Close() {
 	glfw.Terminate()
 }
 
+func (w *GameWindow) GetKey(key glfw.Key) glfw.Action {
+	return w.window.GetKey(key)
+}
+
 func CreateWindow(width, height int, title string) (*GameWindow, error) {
 	if err := glfw.Init(); err != nil {
 		return nil, err
@@ -33,7 +37,7 @@ func CreateWindow(width, height int, title string) (*GameWindow, error) {
 	glfw.WindowHint(glfw.OpenGLProfile, glfw.OpenGLCoreProfile)
 	glfw.WindowHint(glfw.OpenGLForwardCompatible, glfw.True)
 
-	window, err := glfw.CreateWindow(windowWidth, windowHeight, "Cube", nil, nil)
+	window, err := glfw.CreateWindow(width, height, "Cube", nil, nil)
 	if err != nil {
 		return nil, err
 	}

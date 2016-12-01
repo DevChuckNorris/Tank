@@ -1,4 +1,4 @@
-package main
+package ogl
 
 import (
 	"fmt"
@@ -95,13 +95,13 @@ func NewShader(vertex, fragment string) (*Shader, error) {
 
 func LoadShader(vertexFile, fragmentFile string) (*Shader, error) {
 	// Load shader files
-	vertexBuf, err := ioutil.ReadFile("vertex.glsl")
+	vertexBuf, err := ioutil.ReadFile(vertexFile)
 	if err != nil {
 		return nil, err
 	}
 	vertex := string(vertexBuf) + "\x00"
 
-	fragmentBuf, err := ioutil.ReadFile("fragment.glsl")
+	fragmentBuf, err := ioutil.ReadFile(fragmentFile)
 	if err != nil {
 		return nil, err
 	}
