@@ -12,8 +12,9 @@ type Model struct {
 	vertecies []float32
 	index     []uint32
 	texCoords []float32
+	normals   []float32
 
-	vao, vbo, tbo, ibo uint32
+	vao, vbo, tbo, nbo, ibo uint32
 }
 
 func (m *Model) Draw() {
@@ -40,6 +41,12 @@ func (m *Model) build(shader *Shader) {
 
 	shader.VertexAttribPointer("vertTexCoord", 2, gl.FLOAT, false, 2*4, gl.PtrOffset(0))
 
+	gl.GenBuffers(1, &m.nbo)
+	gl.BindBuffer(gl.ARRAY_BUFFER, m.nbo)
+	gl.BufferData(gl.ARRAY_BUFFER, len(m.normals)*4, gl.Ptr(m.normals), gl.STATIC_DRAW)
+
+	shader.VertexAttribPointer("vertNormal", 3, gl.FLOAT, false, 3*4, gl.PtrOffset(0))
+
 	gl.GenBuffers(1, &m.ibo)
 	gl.BindBuffer(gl.ELEMENT_ARRAY_BUFFER, m.ibo)
 	gl.BufferData(gl.ELEMENT_ARRAY_BUFFER, len(m.index)*4, gl.Ptr(m.index), gl.STATIC_DRAW)
@@ -59,29 +66,37 @@ func NewModel(shader *Shader, file string) (*Model, error) {
 	for i := range temp {
 		line := temp[i]
 		if strings.HasPrefix(line, "v ") {
-            var x, y, z float32
-            _, err := fmt.Sscanf(line, "v %f %f %f", &x, &y, &z)
-            if err != nil {
-                return nil, fmt.Errorf("Failed to parse line %d:\n%v", i, err)
-            }
+			var x, y, z float32
+			_, err := fmt.Sscanf(line, "v %f %f %f", &x, &y, &z)
+			if err != nil {
+				return nil, fmt.Errorf("Failed to parse line %d:\n%v", i, err)
+			}
 
-            ret.vertecies = append(ret.vertecies, float32(x), float32(y), float32(z))
+			ret.vertecies = append(ret.vertecies, x, y, z)
 		} else if strings.HasPrefix(line, "f ") {
-            var v1, t1, n1, v2, t2, n2, v3, t3, n3 uint32
-            _, err := fmt.Sscanf(line, "f %d/%d/%d %d/%d/%d %d/%d/%d", &v1, &t1, &n1, &v2, &t2, &n2 ,&v3, &t3, &n3)
-            if err != nil {
-                return nil, fmt.Errorf("Failed to parse line %d:\n%v", i, err)
-            }
+			var v1, t1, n1, v2, t2, n2, v3, t3, n3 uint32
+			_, err := fmt.Sscanf(line, "f %d/%d/%d %d/%d/%d %d/%d/%d", &v1, &t1, &n1, &v2, &t2, &n2, &v3, &t3, &n3)
+			if err != nil {
+				return nil, fmt.Errorf("Failed to parse line %d:\n%v", i, err)
+			}
 
 			ret.index = append(ret.index, v1-1, v2-1, v3-1)
 		} else if strings.HasPrefix(line, "vt ") {
-            var x, y float32
-            _, err := fmt.Sscanf(line, "vt %f %f", &x, &y)
-            if err != nil {
-                return nil, fmt.Errorf("Failed to parse line %d:\n%v", i, err)
-            }
+			var x, y float32
+			_, err := fmt.Sscanf(line, "vt %f %f", &x, &y)
+			if err != nil {
+				return nil, fmt.Errorf("Failed to parse line %d:\n%v", i, err)
+			}
 
-			ret.texCoords = append(ret.texCoords, float32(x), float32(y))
+			ret.texCoords = append(ret.texCoords, x, y)
+		} else if strings.HasPrefix(line, "vn ") {
+			var x, y, z float32
+			_, err := fmt.Sscanf(line, "vn %f %f %f", &x, &y, &z)
+			if err != nil {
+				return nil, fmt.Errorf("Failed to parse line %d:\n%v", i, err)
+			}
+
+			ret.normals = append(ret.normals, x, y, z)
 		}
 	}
 

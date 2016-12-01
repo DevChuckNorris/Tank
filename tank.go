@@ -49,6 +49,7 @@ func main() {
 	shader.SetMatrix4fv("projection", &projection[0])
 	shader.SetMatrix4fv("camera", &camera[0])
 	shader.SetMatrix4fv("model", &model[0])
+	shader.Set3f("light", mgl32.Vec3{4, 4, 4})
 
 	// Load model
 	tank, err := NewModel(shader, "tank.obj")
