@@ -19,7 +19,7 @@ void main() {
     float LightPower = 50.0f;
 
     vec3 MaterialDiffuseColor = texture(tex, fragTexCoord).rgb;
-	vec3 MaterialAmbientColor = vec3(0.1,0.1,0.1) * MaterialDiffuseColor;
+	vec3 MaterialAmbientColor = vec3(0.3,0.3,0.3) * MaterialDiffuseColor;
 	vec3 MaterialSpecularColor = vec3(0.3,0.3,0.3);
 
     float distance = length( light - Position_worldspace );

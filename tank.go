@@ -24,6 +24,8 @@ func init() {
 }
 
 func main() {
+	position = mgl32.Vec3{0, 0, -5}
+
 	window, err := ogl.CreateWindow(windowWidth, windowHeight, "Cube")
 	if err != nil {
 		panic(err)
@@ -82,7 +84,7 @@ func main() {
 	shader.SetMatrix4fv("projection", &projection[0])
 	shader.SetMatrix4fv("camera", &camera[0])
 	shader.SetMatrix4fv("model", &model[0])
-	shader.Set3f("light", mgl32.Vec3{4, 4, 4})
+	shader.Set3f("light", mgl32.Vec3{0, 5, 0})
 
 	// Load model
 	tank, err := ogl.NewModel(shader, "data/tank.obj")
@@ -101,6 +103,13 @@ func main() {
 	lastSpace := window.GetKey(glfw.KeySpace)
 
 	angleCorrection := 0.0 //math.Pi * 90 / 180.0
+
+	groundTexture, err := ogl.NewImage("data/std_ground.png")
+	if err != nil {
+		log.Fatalln("Failed to load image", err)
+	}
+
+	base := ogl.NewBox(10, 0, 10, 5, shader)
 
 	for !window.ShouldClose() {
 		gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
@@ -142,6 +151,12 @@ func main() {
 
 		textures[textureId].Bind()
 		tank.Draw()
+
+		groundTexture.Bind()
+		model = mgl32.Ident4()
+		shader.SetMatrix4fv("model", &model[0])
+
+		base.Draw()
 
 		window.Update()
 	}
