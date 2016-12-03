@@ -84,7 +84,6 @@ func main() {
 	shader.SetMatrix4fv("projection", &projection[0])
 	shader.SetMatrix4fv("camera", &camera[0])
 	shader.SetMatrix4fv("model", &model[0])
-	shader.Set3f("light", mgl32.Vec3{0, 5, 0})
 
 	// Load model
 	tank, err := ogl.NewModel(shader, "data/tank.obj")
@@ -104,6 +103,8 @@ func main() {
 
 	angleCorrection := 0.0 //math.Pi * 90 / 180.0
 
+	sunAngle := 45.0
+
 	groundTexture, err := ogl.NewImage("data/std_ground.png")
 	if err != nil {
 		log.Fatalln("Failed to load image", err)
@@ -117,6 +118,13 @@ func main() {
 		time := glfw.GetTime()
 		elapsed := time - previousTime
 		previousTime = time
+
+		lightPos := mgl32.Vec3{
+			float32(math.Cos(sunAngle*math.Pi/180.0)) * 70,
+			float32(math.Sin(sunAngle*math.Pi/180.0)) * 70,
+			0.0}
+		lightPos = lightPos.Normalize().Mul(-1)
+		shader.Set3f("light", lightPos)
 
 		//angle += elapsed
 		rotation := mgl32.HomogRotate3D(float32(angle), mgl32.Vec3{0, 1, 0})
@@ -139,7 +147,6 @@ func main() {
 			angle -= float64(mgl32.DegToRad(100)) * elapsed
 		}
 		if window.GetKey(glfw.KeyW) == glfw.Press {
-			fmt.Println("W")
 			position = position.Add(mgl32.Vec3{
 				float32(2 * elapsed * math.Cos(angle-angleCorrection)),
 				0,
