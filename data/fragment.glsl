@@ -18,12 +18,12 @@ void main() {
     float diff = max(dot(norm, lightDir), 0.0);
     vec3 diffuse = diff * vec3(1, 1, 1);
 
-    vec3 result = (ambient + diffuse) * vec3(texture2D(tex, fragTexCoord));
+    vec3 result = (ambient + diffuse) * vec3(texture(tex, fragTexCoord));
     outputColor = result;*/
 
 
     //float fDiffuseIntensity = max(0.0, dot(normalize(vNormal), -sunLight.vDirection));
-    vec3 texColor = vec3(texture2D(tex, fragTexCoord));
+    vec3 texColor = vec3(texture(tex, fragTexCoord));
 
     float ambientIntensity = 0.25f;
     float diffuseIntensity = max(0.0, dot(normalize(fragNormal), -light));
