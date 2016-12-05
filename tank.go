@@ -44,6 +44,9 @@ func main() {
 	render := system.RenderSystem{}
 	world.AddSystem(&render)
 
+	controller := system.ControllerSystem{Window: window}
+	world.AddSystem(&controller)
+
 	// Load shader
 	shader, err := ogl.LoadShader("data/vertex.glsl", "data/fragment.glsl")
 	if err != nil {
@@ -64,9 +67,14 @@ func main() {
 	if err != nil {
 		log.Fatalln("Failed to load model", err)
 	}
+	groundModel := ogl.NewBox(10, 0, 10, 5, shader)
 
 	// Load image
 	texture, err := ogl.NewImage("data/blue_tank.png")
+	if err != nil {
+		log.Fatalln("Failed to load image", err)
+	}
+	groundTexture, err := ogl.NewImage("data/std_ground.png")
 	if err != nil {
 		log.Fatalln("Failed to load image", err)
 	}
@@ -74,9 +82,24 @@ func main() {
 	// Create tank
 	tank := entity.Tank{BasicEntity: ecs.NewBasic()}
 	tank.ModelComponent = component.ModelComponent{Shader: shader, Model: tankModel, Texture: texture}
-	tank.TransformComponent = component.TransformComponent{0.0, 0.0, -5.0, 0.4, 0.4, 0.4, mgl32.DegToRad(-90), 0.0, 0.0}
+	tank.TransformComponent = component.TransformComponent{
+		X: 0.0, Y: 0.0, Z: -5.0,
+		ScaleX: 0.4, ScaleY: 0.4, ScaleZ: 0.4,
+		RotationX: mgl32.DegToRad(-90), RotationY: 0.0, RotationZ: 0.0}
+	tank.MovementComponent = component.MovementComponent{MoveSpeed: 2, RotationSpeed: 100}
 
 	render.Add(&tank.BasicEntity, &tank.ModelComponent, &tank.TransformComponent)
+	controller.Add(&tank.BasicEntity, &tank.TransformComponent, &tank.MovementComponent)
+
+	// Create ground
+	ground := entity.Obstacle{BasicEntity: ecs.NewBasic()}
+	ground.ModelComponent = component.ModelComponent{Shader: shader, Model: groundModel, Texture: groundTexture}
+	ground.TransformComponent = component.TransformComponent{
+		X: 0.0, Y: 0.0, Z: 0.0,
+		ScaleX: 1, ScaleY: 1, ScaleZ: 1,
+		RotationX: 0.0, RotationY: 0.0, RotationZ: 0.0}
+
+	render.Add(&ground.BasicEntity, &ground.ModelComponent, &ground.TransformComponent)
 
 	sunAngle := 45.0
 

@@ -5,10 +5,9 @@ import (
 	"github.com/devchucknorris/tank/component"
 )
 
-type Tank struct {
+type Obstacle struct {
 	ecs.BasicEntity
 
 	component.ModelComponent
 	component.TransformComponent
-	component.MovementComponent
 }
