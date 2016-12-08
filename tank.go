@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"log"
-	"math"
 	"runtime"
 
 	"engo.io/ecs"
@@ -16,8 +15,8 @@ import (
 	"github.com/go-gl/mathgl/mgl32"
 )
 
-const windowWidth = 800
-const windowHeight = 600
+const windowWidth = 1920
+const windowHeight = 1080
 
 func init() {
 	runtime.LockOSThread()
@@ -81,7 +80,7 @@ func main() {
 
 	// Create tank
 	tank := entity.Tank{BasicEntity: ecs.NewBasic()}
-	tank.ModelComponent = component.ModelComponent{Shader: shader, Model: tankModel, Texture: texture}
+	tank.ModelComponent = component.ModelComponent{Shader: shader, Model: tankModel, Texture: texture, CastShadow: true}
 	tank.TransformComponent = component.TransformComponent{
 		X: 0.0, Y: 0.0, Z: -5.0,
 		ScaleX: 0.4, ScaleY: 0.4, ScaleZ: 0.4,
@@ -101,16 +100,7 @@ func main() {
 
 	render.Add(&ground.BasicEntity, &ground.ModelComponent, &ground.TransformComponent)
 
-	sunAngle := 45.0
-
 	for !window.ShouldClose() {
-		lightPos := mgl32.Vec3{
-			float32(math.Cos(sunAngle*math.Pi/180.0)) * 70,
-			float32(math.Sin(sunAngle*math.Pi/180.0)) * 70,
-			0.0}
-		lightPos = lightPos.Normalize().Mul(-1)
-		shader.Set3f("light", lightPos)
-
 		time := glfw.GetTime()
 		elapsed := float32(time - previousTime)
 		previousTime = time

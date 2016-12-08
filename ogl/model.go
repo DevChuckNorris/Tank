@@ -39,19 +39,19 @@ func (m *Model) build(shader *Shader) {
 	gl.BindBuffer(gl.ARRAY_BUFFER, m.vbo)
 	gl.BufferData(gl.ARRAY_BUFFER, len(m.vertecies)*4, gl.Ptr(m.vertecies), gl.STATIC_DRAW)
 
-	shader.VertexAttribPointer("vert", 3, gl.FLOAT, false, 3*4, gl.PtrOffset(0))
+	shader.VertexAttribPointer(0, 3, gl.FLOAT, false, 3*4, gl.PtrOffset(0))
 
 	gl.GenBuffers(1, &m.tbo)
 	gl.BindBuffer(gl.ARRAY_BUFFER, m.tbo)
 	gl.BufferData(gl.ARRAY_BUFFER, len(m.texCoords)*4, gl.Ptr(m.texCoords), gl.STATIC_DRAW)
 
-	shader.VertexAttribPointer("vertTexCoord", 2, gl.FLOAT, false, 2*4, gl.PtrOffset(0))
+	shader.VertexAttribPointer(1, 2, gl.FLOAT, false, 2*4, gl.PtrOffset(0))
 
 	gl.GenBuffers(1, &m.nbo)
 	gl.BindBuffer(gl.ARRAY_BUFFER, m.nbo)
 	gl.BufferData(gl.ARRAY_BUFFER, len(m.normals)*4, gl.Ptr(m.normals), gl.STATIC_DRAW)
 
-	shader.VertexAttribPointer("vertNormal", 3, gl.FLOAT, false, 3*4, gl.PtrOffset(0))
+	shader.VertexAttribPointer(2, 3, gl.FLOAT, false, 3*4, gl.PtrOffset(0))
 
 	gl.GenBuffers(1, &m.ibo)
 	gl.BindBuffer(gl.ELEMENT_ARRAY_BUFFER, m.ibo)

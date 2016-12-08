@@ -4,9 +4,9 @@ uniform mat4 projection;
 uniform mat4 camera;
 uniform mat4 model;
 
-in vec3 vert;
-in vec2 vertTexCoord;
-in vec3 vertNormal;
+layout(location = 0) in vec3 vert;
+layout(location = 1) in vec2 vertTexCoord;
+layout(location = 2) in vec3 vertNormal;
 
 out vec3 fragPos;
 out vec3 fragNormal;

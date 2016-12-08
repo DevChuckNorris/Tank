@@ -18,6 +18,11 @@ func (s *Shader) Use() {
 	gl.UseProgram(s.program)
 }
 
+func (s *Shader) Set1i(name string, value int32) {
+	uniform := gl.GetUniformLocation(s.program, gl.Str(name+"\x00"))
+	gl.Uniform1i(uniform, value)
+}
+
 func (s *Shader) Set3f(name string, vec3 mgl32.Vec3) {
 	uniform := gl.GetUniformLocation(s.program, gl.Str(name+"\x00"))
 	gl.Uniform3f(uniform, vec3.X(), vec3.Y(), vec3.Z())
@@ -28,10 +33,9 @@ func (s *Shader) SetMatrix4fv(name string, value *float32) {
 	gl.UniformMatrix4fv(uniform, 1, false, value)
 }
 
-func (s *Shader) VertexAttribPointer(name string, size int32, xtype uint32, normalized bool, stride int32, pointer unsafe.Pointer) {
-	attrib := uint32(gl.GetAttribLocation(s.program, gl.Str(name+"\x00")))
-	gl.EnableVertexAttribArray(attrib)
-	gl.VertexAttribPointer(attrib, size, xtype, normalized, stride, pointer)
+func (s *Shader) VertexAttribPointer(location uint32, size int32, xtype uint32, normalized bool, stride int32, pointer unsafe.Pointer) {
+	gl.EnableVertexAttribArray(location)
+	gl.VertexAttribPointer(location, size, xtype, normalized, stride, pointer)
 }
 
 func compile(source string, shaderType uint32) (uint32, error) {
