@@ -41,7 +41,7 @@ func main() {
 
 	world := ecs.World{}
 
-	render := system.RenderSystem{}
+	render := system.NewRenderSystem(windowWidth, windowHeight)
 	world.AddSystem(&render)
 
 	controller := system.ControllerSystem{Window: window}
@@ -104,8 +104,6 @@ func main() {
 	sunAngle := 45.0
 
 	for !window.ShouldClose() {
-		gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
-
 		lightPos := mgl32.Vec3{
 			float32(math.Cos(sunAngle*math.Pi/180.0)) * 70,
 			float32(math.Sin(sunAngle*math.Pi/180.0)) * 70,

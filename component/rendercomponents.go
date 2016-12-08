@@ -6,9 +6,10 @@ import (
 )
 
 type ModelComponent struct {
-	Texture *ogl.Image
-	Model   *ogl.Model
-	Shader  *ogl.Shader
+	Texture    *ogl.Image
+	Model      *ogl.Model
+	Shader     *ogl.Shader
+	CastShadow bool
 }
 
 type TransformComponent struct {

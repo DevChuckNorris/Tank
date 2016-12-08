@@ -17,6 +17,12 @@ type Model struct {
 	vao, vbo, tbo, nbo, ibo uint32
 }
 
+func (m *Model) Bind() {
+	gl.BindBuffer(gl.ARRAY_BUFFER, m.vbo)
+	gl.BindBuffer(gl.ARRAY_BUFFER, m.tbo)
+	gl.BindBuffer(gl.ARRAY_BUFFER, m.nbo)
+}
+
 func (m *Model) Draw() {
 	gl.BindVertexArray(m.vao)
 	gl.DrawElements(gl.TRIANGLES, int32(len(m.index)), gl.UNSIGNED_INT, gl.PtrOffset(0))
