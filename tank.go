@@ -53,14 +53,6 @@ func main() {
 	}
 	shader.Use()
 
-	// Projection etc
-	projection := mgl32.Perspective(mgl32.DegToRad(45.0), float32(windowWidth)/windowHeight, 0.1, 100.0)
-	camera := mgl32.LookAtV(mgl32.Vec3{2, 4, 10}, mgl32.Vec3{2, 0, 0}, mgl32.Vec3{0, 1, 0})
-
-	// Bind to shader
-	shader.SetMatrix4fv("projection", &projection[0])
-	shader.SetMatrix4fv("camera", &camera[0])
-
 	// Load model
 	tankModel, err := ogl.NewModel(shader, "data/tank.obj")
 	if err != nil {
@@ -92,7 +84,7 @@ func main() {
 
 	// Create ground
 	ground := entity.Obstacle{BasicEntity: ecs.NewBasic()}
-	ground.ModelComponent = component.ModelComponent{Shader: shader, Model: groundModel, Texture: groundTexture}
+	ground.ModelComponent = component.ModelComponent{Shader: shader, Model: groundModel, Texture: groundTexture, CastShadow: true}
 	ground.TransformComponent = component.TransformComponent{
 		X: 0.0, Y: 0.0, Z: 0.0,
 		ScaleX: 1, ScaleY: 1, ScaleZ: 1,
